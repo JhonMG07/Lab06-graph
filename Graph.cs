@@ -24,7 +24,7 @@ public class Graph<T>
                     To = nodeTo,
                     Weight = i < nodeFrom.Weights.Count
                 ? nodeFrom.Weights[i] : 0
-};
+                };
                 return edge;
             }
             return null;
@@ -72,7 +72,7 @@ public class Graph<T>
         int index = from.Neighbors.FindIndex(n => n == to);
         if (index >= 0)
         {
-from.Neighbors.RemoveAt(index);
+            from.Neighbors.RemoveAt(index);
             if (_isWeighted)
             {
                 from.Weights.RemoveAt(index);
@@ -96,5 +96,56 @@ from.Neighbors.RemoveAt(index);
             }
         }
         return edges;
+    }
+
+    ////
+
+    public List<Node<T>> DFS()
+    {
+        bool[] isVisited = new bool[Nodes.Count];
+        List<Node<T>> result = new List<Node<T>>();
+        DFS(isVisited, Nodes[0], result);
+        return result;
+    }
+    private void DFS(bool[] isVisited, Node<T> node,
+ List<Node<T>> result)
+    {
+        result.Add(node);
+        isVisited[node.Index] = true;
+        foreach (Node<T> neighbor in node.Neighbors)
+        {
+            if (!isVisited[neighbor.Index])
+            {
+                DFS(isVisited, neighbor, result);
+            }
+        }
+    }
+    public List<Node<T>> BFS()
+    {
+        return BFS(Nodes[0]);
+    }
+    private List<Node<T>> BFS(Node<T> node)
+    {
+        bool[] isVisited = new bool[Nodes.Count];
+        isVisited[node.Index] = true;
+        List<Node<T>> result = new List<Node<T>>();
+        Queue<Node<T>> queue = new Queue<Node<T>>();
+        queue.Enqueue(node);
+        while (queue.Count > 0)
+        {
+            Node<T> next = queue.Dequeue();
+            result.Add(next);
+            foreach (Node<T> neighbor in next.Neighbors)
+            {
+                if (!isVisited[neighbor.Index])
+                {
+                    isVisited[neighbor.Index] = true;
+                    queue.Enqueue(neighbor);
+                }
+            }
+        }
+        return result;
+
+
     }
 }
